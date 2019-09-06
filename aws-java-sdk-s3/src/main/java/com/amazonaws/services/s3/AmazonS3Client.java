@@ -3519,9 +3519,15 @@ public class AmazonS3Client extends AmazonWebServiceClient implements AmazonS3 {
             request.addHeader(Headers.S3_CANNED_ACL, initiateMultipartUploadRequest.getCannedACL().toString());
         }
 
-        if (initiateMultipartUploadRequest.objectMetadata != null) {
-            populateRequestMetadata(request, initiateMultipartUploadRequest.objectMetadata);
+        if (initiateMultipartUploadRequest.objectMetadata == null) {
+            initiateMultipartUploadRequest.setObjectMetadata(new ObjectMetadata());
         }
+        
+        if (initiateMultipartUploadRequest.objectMetadata.getContentType() == null) {
+            initiateMultipartUploadRequest.objectMetadata.setContentType(Mimetypes.getInstance().getMimetype(initiateMultipartUploadRequest.getKey()));
+        }
+
+        populateRequestMetadata(request, initiateMultipartUploadRequest.objectMetadata);
 
         populateRequesterPaysHeader(request, initiateMultipartUploadRequest.isRequesterPays());
 
